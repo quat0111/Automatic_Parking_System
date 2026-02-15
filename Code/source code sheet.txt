@@ -1,0 +1,31 @@
+function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = JSON.parse(e.postData.contents);
+
+  sheet.appendRow([
+    new Date(),
+    data.transactionId,
+    data.amount,
+    data.name
+  ]);
+
+  return ContentService.createTextOutput("OK");
+}
+
+function doGet(e) {
+  if (e.parameter.action === "reset") {
+    resetSheet();
+    return ContentService.createTextOutput("Đã reset sheet!");
+  } else {
+    return ContentService.createTextOutput("Webhook đang hoạt động!");
+  }
+}
+
+function resetSheet() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var lastRow = sheet.getLastRow();
+
+  if (lastRow > 1) {
+    sheet.deleteRows(2, lastRow - 1); // Xóa từ dòng 2 trở đi (giữ lại tiêu đề nếu có)
+  }
+}
